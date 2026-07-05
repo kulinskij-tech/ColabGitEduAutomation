@@ -1,0 +1,12 @@
+materials_root: "C:/Users/myself/Documents/localtexmf/Mytex/lectures"
+
+pilot_course:
+  name: "Atomic_py"
+  path: "quantum/AtomicPhys/Atomic_py"
+
+github:
+  user: "CHANGE_ME"
+  branch: "main"
+
+colab:
+  enabled: true
