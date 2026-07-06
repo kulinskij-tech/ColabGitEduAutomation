@@ -1,3 +1,7 @@
+from pathlib import Path
+import shutil
+
+
 class GitHubRepository:
     """Represents a GitHub repository associated with a course."""
 
@@ -28,3 +32,25 @@ class GitHubRepository:
             )
 
         return "\n".join(lines)
+
+    def export(self, destination):
+        destination = Path(destination)
+        course_dir = self.course.config.github_course_dir.strip("/")
+        if not course_dir:
+            raise ValueError("Course GitHub directory is not configured")
+
+        destination.mkdir(parents=True, exist_ok=True)
+        (destination / "README.md").write_text(
+            f"# {self.course.path.name}\n", encoding="utf-8"
+        )
+        (destination / ".gitignore").write_text(
+            ".ipynb_checkpoints/\n__pycache__/\n", encoding="utf-8"
+        )
+
+        notebook_dir = destination / course_dir
+        notebook_dir.mkdir(parents=True, exist_ok=True)
+
+        for notebook_path in sorted(self.course.path.glob("*.ipynb")):
+            shutil.copy2(notebook_path, notebook_dir / notebook_path.name)
+
+        return destination
