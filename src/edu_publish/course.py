@@ -11,7 +11,6 @@ class Course:
         self.path = Path(path)
         self.toc = self._find_toc()
         self.notebooks = []
-        self.missing = []
 
         self._discover()
 
