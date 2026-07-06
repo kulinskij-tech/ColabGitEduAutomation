@@ -1,6 +1,8 @@
 from pathlib import Path
 import shutil
 
+RESOURCE_DIRS = ("images", "figs", "img", "data")
+
 
 class GitHubRepository:
     """Represents a GitHub repository associated with a course."""
@@ -52,5 +54,18 @@ class GitHubRepository:
 
         for notebook_path in sorted(self.course.path.glob("*.ipynb")):
             shutil.copy2(notebook_path, notebook_dir / notebook_path.name)
+
+        for name in RESOURCE_DIRS:
+            resource_dir = self.course.path / name
+            if resource_dir.is_dir():
+                target_dir = notebook_dir / name
+                if target_dir.exists():
+                    shutil.rmtree(target_dir)
+                shutil.copytree(
+                    resource_dir,
+                    target_dir,
+                    dirs_exist_ok=True,
+                    ignore=shutil.ignore_patterns(".ipynb_checkpoints"),
+                )
 
         return destination
