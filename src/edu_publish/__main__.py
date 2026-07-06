@@ -1,7 +1,7 @@
 from pathlib import Path
 import sys
 
-from edu_publish.discover import analyze_course
+from edu_publish.course import Course
 
 
 def main():
@@ -11,7 +11,8 @@ def main():
         raise SystemExit(1)
 
     course_path = Path(sys.argv[2])
-    analyze_course(course_path)
+    course = Course(course_path)
+    print(course.report())
 
 
 if __name__ == "__main__":
