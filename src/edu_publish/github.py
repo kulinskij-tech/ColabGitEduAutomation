@@ -10,7 +10,9 @@ class GitHubRepository:
             raise ValueError("Course GitHub repository is not configured")
 
         branch = self.course.config.github_branch
-        return f"https://github.com/{repo}/blob/{branch}/{notebook.filename}"
+        course_dir = self.course.config.github_course_dir.strip("/")
+        path = f"{course_dir}/{notebook.filename}" if course_dir else notebook.filename
+        return f"https://github.com/{repo}/blob/{branch}/{path}"
 
     def publication_report(self):
         lines = [
