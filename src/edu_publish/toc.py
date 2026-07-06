@@ -6,6 +6,21 @@ import re
 link_pattern = re.compile(r"\]\(([^)]+\.ipynb)\)")
 
 
+class TOC:
+    """Represents a course TOC notebook."""
+
+    def __init__(self, path):
+        self.path = Path(path)
+
+    @property
+    def name(self):
+        return self.path.name
+
+    def notebook_links(self) -> list[str]:
+        text = read_notebook_markdown(self.path)
+        return extract_notebook_links(text)
+
+
 def read_notebook_markdown(path: Path) -> str:
     data = json.loads(path.read_text(encoding="utf-8"))
 

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from edu_publish.toc import read_notebook_markdown, extract_notebook_links
+from edu_publish.toc import TOC
 
 from edu_publish.notebook import Notebook
 
@@ -9,7 +9,7 @@ class Course:
 
     def __init__(self, path):
         self.path = Path(path)
-        self.toc = self._find_toc()
+        self.toc = TOC(self._find_toc())
         self.notebooks = []
 
         self._discover()
@@ -31,9 +31,7 @@ class Course:
         return toc_files[0]
 
     def _discover(self):
-        text = read_notebook_markdown(self.toc)
-
-        links = extract_notebook_links(text)
+        links = self.toc.notebook_links()
 
         self.notebooks = [
         Notebook(self, filename)
