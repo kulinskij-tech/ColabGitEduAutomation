@@ -11,3 +11,18 @@ class GitHubRepository:
 
         branch = self.course.config.github_branch
         return f"https://github.com/{repo}/blob/{branch}/{notebook.filename}"
+
+    def publication_report(self):
+        lines = [
+            f"TOC: {self.course.toc.name}",
+            f"Found {len(self.course.notebooks)} notebooks:",
+            "",
+        ]
+
+        for i, notebook in enumerate(self.course.notebooks, start=1):
+            exists = "OK" if notebook.exists else "MISSING"
+            lines.append(
+                f"{i:02d}. {notebook.filename} [{exists}] {self.notebook_url(notebook)}"
+            )
+
+        return "\n".join(lines)
