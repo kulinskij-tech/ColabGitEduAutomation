@@ -38,6 +38,10 @@ def analyze_course(course: Path) -> None:
 
 
 if __name__ == "__main__":
-    analyze_course(
-        Path("/media/me/Myfiles/localtexmf/Mytex/lectures/quantum/AtomicPhys/Atomic_py")
-    )
+    import sys
+
+    if len(sys.argv) != 2:
+        print("Usage: python src/edu_publish/discover.py /path/to/course")
+        raise SystemExit(1)
+
+    analyze_course(Path(sys.argv[1]))
