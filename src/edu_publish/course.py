@@ -2,6 +2,7 @@ from pathlib import Path
 
 from edu_publish.toc import read_notebook_markdown, extract_notebook_links
 
+from edu_publish.notebook import Notebook
 
 class Course:
     """Represents a course directory."""
@@ -33,11 +34,11 @@ class Course:
     def _discover(self):
         text = read_notebook_markdown(self.toc)
 
-        self.notebooks = extract_notebook_links(text)
+        links = extract_notebook_links(text)
 
-        self.missing = [
-            link for link in self.notebooks
-            if not (self.path / link).exists()
+        self.notebooks = [
+        Notebook(self, filename)
+        for filename in links
         ]
 
     def report(self):
@@ -47,9 +48,11 @@ class Course:
             "",
         ]
 
-        for i, link in enumerate(self.notebooks, start=1):
-            exists = "OK" if link not in self.missing else "MISSING"
-            lines.append(f"{i:02d}. {link} [{exists}]")
+        for i, notebook in enumerate(self.notebooks, start=1):
+            exists = "OK" if notebook.exists else "MISSING"
+            lines.append(
+            f"{i:02d}. {notebook.filename} [{exists}]"
+            )
 
         return "\n".join(lines)
 
