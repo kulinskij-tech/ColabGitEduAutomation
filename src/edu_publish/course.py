@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from edu_publish.config import CourseConfig
 from edu_publish.toc import TOC
 
 from edu_publish.notebook import Notebook
@@ -7,8 +8,9 @@ from edu_publish.notebook import Notebook
 class Course:
     """Represents a course directory."""
 
-    def __init__(self, path):
+    def __init__(self, path, config=None):
         self.path = Path(path)
+        self.config = config or CourseConfig()
         self.toc = TOC(self._find_toc())
         self.notebooks = []
 
