@@ -2,13 +2,10 @@ from pathlib import Path
 import json
 import re
 
-COURSE = Path(
-    r"C:\Users\myself\Documents\localtexmf\Mytex\lectures\quantum\AtomicPhys\Atomic_py"
-)
-
-TOC = COURSE / "atomicphys_toc.ipynb"
+TOC_NAME = "atomicphys_toc.ipynb"
 
 link_pattern = re.compile(r"\]\(([^)]+\.ipynb)\)")
+
 
 def read_notebook_markdown(path: Path) -> str:
     data = json.loads(path.read_text(encoding="utf-8"))
@@ -19,19 +16,28 @@ def read_notebook_markdown(path: Path) -> str:
             parts.append("".join(src))
     return "\n".join(parts)
 
-text = read_notebook_markdown(TOC)
 
-links = []
-for match in link_pattern.finditer(text):
-    link = match.group(1)
-    link = link.split("#")[0]
-    link = Path(link).name
-    if link not in links:
-        links.append(link)
+def analyze_course(course: Path) -> None:
+    toc = course / TOC_NAME
+    text = read_notebook_markdown(toc)
 
-print(f"TOC: {TOC.name}")
-print(f"Found {len(links)} notebook links:\n")
+    links = []
+    for match in link_pattern.finditer(text):
+        link = match.group(1)
+        link = link.split("#")[0]
+        link = Path(link).name
+        if link not in links:
+            links.append(link)
 
-for i, link in enumerate(links, start=1):
-    exists = "OK" if (COURSE / link).exists() else "MISSING"
-    print(f"{i:02d}. {link} [{exists}]")
+    print(f"TOC: {toc.name}")
+    print(f"Found {len(links)} notebook links:\n")
+
+    for i, link in enumerate(links, start=1):
+        exists = "OK" if (course / link).exists() else "MISSING"
+        print(f"{i:02d}. {link} [{exists}]")
+
+
+if __name__ == "__main__":
+    analyze_course(
+        Path("/media/me/Myfiles/localtexmf/Mytex/lectures/quantum/AtomicPhys/Atomic_py")
+    )
