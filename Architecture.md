@@ -15,21 +15,23 @@ The same codebase should work on Linux and Windows.
 
 ## Design Principles
 
-The project follows object-oriented design.
+The project follows small, incremental object-oriented design.
 
-Objects represent real domain concepts.
+Objects represent real domain concepts and keep platform-specific behavior in
+platform-specific classes.
 
 Current domain objects:
 
 - Course
-- Notebook
-
-Planned objects:
-
 - TOC
-- GitHubPublisher
-- ColabPublisher
-- ClassroomPublisher
+- Notebook
+- CourseConfig
+- GitHubRepository
+- ColabRepository
+
+Planned domain objects:
+
+- Google Classroom publishing object
 
 ---
 
@@ -39,11 +41,11 @@ Represents one course directory.
 
 Responsibilities:
 
-- discover TOC notebook
-- discover notebooks
-- coordinate publishers
+- discover the TOC notebook
+- discover notebooks linked from the TOC
+- hold publication configuration
 
-Course should NOT know platform-specific publishing details.
+Course should not generate platform-specific URLs.
 
 ---
 
@@ -57,11 +59,7 @@ Responsibilities:
 - filesystem path
 - existence check
 
-Later responsibilities:
-
-- GitHub URL
-- Colab URL
-- Classroom attachment
+Notebook objects do not generate URLs.
 
 ---
 
@@ -76,17 +74,78 @@ Responsibilities:
 
 ---
 
-## Publishers
+## CourseConfig
 
-Publishers consume Course objects.
+Stores publication configuration.
 
-They never rediscover notebooks themselves.
+Current fields:
 
-Course
-    ├── TOC
-    ├── Notebook[]
-    ├── GitHubPublisher
-    ├── ColabPublisher
-    └── ClassroomPublisher
+- `github_repo`
+- `github_branch`
+- `github_course_dir`
 
-Publishing should reuse the already discovered Course model.
+---
+
+## GitHubRepository
+
+Represents a GitHub repository associated with a course.
+
+Responsibilities:
+
+- generate GitHub notebook URLs
+- generate GitHub preview reports
+- export a GitHub-ready course directory
+- copy notebooks and supported resource directories
+- apply export-only notebook transformations when repository information is configured
+
+The export-only Colab transformations currently are:
+
+- rewrite exported local notebook links to Colab URLs
+- insert one first-cell Open in Colab badge in each exported notebook
+
+GitHubRepository does not call GitHub APIs, execute git commands, or access the
+network.
+
+---
+
+## ColabRepository
+
+Represents Google Colab links for notebooks hosted in a GitHub repository.
+
+Responsibilities:
+
+- convert GitHub notebook URLs into Google Colab URLs
+
+ColabRepository reuses GitHubRepository for GitHub URL generation so URL logic
+stays centralized.
+
+---
+
+## Export Flow
+
+`github-export` creates a GitHub-ready directory containing:
+
+```text
+DESTINATION/
+    README.md
+    .gitignore
+    COURSE_DIR_NAME/
+        *.ipynb
+        images/
+        figs/
+        img/
+        data/
+```
+
+When `--repo` is not supplied, exported notebooks are copied unchanged.
+
+When `--repo` is supplied, only exported notebooks are transformed:
+
+```text
+copy notebook
+rewrite local notebook links to Colab URLs
+insert Open in Colab badge
+write exported notebook if changed
+```
+
+Source notebooks are never modified.

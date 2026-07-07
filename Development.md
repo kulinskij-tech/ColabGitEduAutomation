@@ -4,7 +4,8 @@
 
 Prefer many small commits.
 
-Every commit should preserve behavior.
+Every commit should preserve existing behavior except for the explicitly
+requested feature.
 
 Typical cycle:
 
@@ -30,6 +31,10 @@ Avoid speculative abstractions.
 
 Objects should represent domain concepts.
 
+Keep URL generation centralized in repository classes.
+
+Never modify source notebooks during export transformations.
+
 ---
 
 ## Code Style
@@ -42,12 +47,28 @@ Keep functions short.
 
 Prefer composition over duplicated discovery logic.
 
+Keep export-only notebook transformations small and explicit.
+
 ---
 
 ## Testing
 
-Primary test:
+Useful manual checks:
 
-python -m edu_publish analyze COURSE_DIRECTORY
+```powershell
+python -m edu_publish analyze COURSE_DIR
+python -m edu_publish github-preview COURSE_DIR --repo owner/repository
+python -m edu_publish colab-preview COURSE_DIR --repo owner/repository
+python -m edu_publish github-export COURSE_DIR DESTINATION
+python -m edu_publish github-export COURSE_DIR DESTINATION --repo owner/repository
+```
 
-Expected output should remain identical after refactoring.
+For exporter changes, verify:
+
+- source notebooks are unchanged
+- export without `--repo` copies notebooks unchanged
+- export with `--repo` applies only exported-notebook transformations
+- local `.ipynb` links become Colab URLs
+- absolute URLs and non-notebook links remain unchanged
+- fragments such as `notebook.ipynb#section` are preserved
+- every exported notebook has exactly one first-cell Open in Colab badge

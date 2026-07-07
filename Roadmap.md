@@ -1,21 +1,44 @@
 # Roadmap
 
-Completed
+## Completed
 
 - Course class
-- TOC discovery
-- Notebook class
-- Notebook objects in Course
-
-Next
-
 - TOC class
-- GitHub publisher
-- Colab publisher
-- Classroom publisher
+- Notebook class
+- CourseConfig
+- GitHubRepository
+- ColabRepository
+- course analysis CLI
+- GitHub preview CLI
+- Colab preview CLI
+- GitHub export CLI
+- resource directory copying during export
+- export without modifying source notebooks
+- Colab link rewriting during repo-aware export
+- Open in Colab badge insertion during repo-aware export
 
-Future
+## Current Stage
 
-- Automatic badge generation
-- Repository synchronization
+The first GitHub and Colab-oriented export workflow is working.
+
+Repo-aware GitHub export now prepares notebooks for the intended user path:
+
+```text
+GitHub course page
+click notebook or badge
+Google Colab opens the notebook
+```
+
+## Next
+
+- improve export validation and error messages
+- add focused automated tests when a test structure is introduced
+- prepare for repository synchronization workflows
+- design Google Classroom integration
+
+## Future
+
+- repository synchronization
 - Google Classroom API integration
+- generated Classroom materials
+- richer course metadata
