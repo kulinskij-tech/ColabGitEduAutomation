@@ -8,6 +8,7 @@ from edu_publish.notebook import Notebook
 
 RESOURCE_DIRS = ("images", "figs", "img", "data")
 NOTEBOOK_LINK_PATTERN = re.compile(r"(\]\()([^)]+?\.ipynb(?:#[^)]+)?)(\))")
+COLAB_BADGE_IMAGE_URL = "https://colab.research.google.com/assets/colab-badge.svg"
 
 
 class GitHubRepository:
@@ -63,7 +64,7 @@ class GitHubRepository:
             shutil.copy2(notebook_path, target_path)
 
         if self.course.config.github_repo:
-            self._rewrite_exported_notebook_links(notebook_dir)
+            self._update_exported_notebooks_for_colab(notebook_dir)
 
         for name in RESOURCE_DIRS:
             resource_dir = self.course.path / name
@@ -80,7 +81,7 @@ class GitHubRepository:
 
         return destination
 
-    def _rewrite_exported_notebook_links(self, notebook_dir):
+    def _update_exported_notebooks_for_colab(self, notebook_dir):
         colab = ColabRepository(self)
         notebook_urls = {
             path.name: colab.notebook_url(Notebook(self.course, path.name))
@@ -88,12 +89,77 @@ class GitHubRepository:
         }
 
         for notebook_path in sorted(notebook_dir.glob("*.ipynb")):
-            rewrite_notebook_links(notebook_path, notebook_urls)
+            apply_colab_export_transformations(
+                notebook_path,
+                notebook_urls,
+                notebook_urls[notebook_path.name],
+            )
+
+
+def apply_colab_export_transformations(notebook_path, notebook_urls, colab_url):
+    notebook_path = Path(notebook_path)
+    data = json.loads(notebook_path.read_text(encoding="utf-8"))
+    changed = rewrite_notebook_links_in_data(data, notebook_urls)
+
+    if insert_colab_badge_cell(data, colab_url):
+        changed = True
+
+    if changed:
+        notebook_path.write_text(
+            json.dumps(data, ensure_ascii=False, indent=1) + "\n",
+            encoding="utf-8",
+        )
+
+    return changed
+
+
+def insert_colab_badge_cell(data, colab_url):
+    badge = colab_badge_markdown(colab_url)
+    cells = data.setdefault("cells", [])
+
+    if cells and cells[0].get("cell_type") == "markdown":
+        source = cells[0].get("source", [])
+        if source_text(source).strip() == badge:
+            return False
+
+    cells.insert(
+        0,
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [badge + "\n"],
+        },
+    )
+    return True
+
+
+def colab_badge_markdown(colab_url):
+    return f"[![Open In Colab]({COLAB_BADGE_IMAGE_URL})]({colab_url})"
+
+
+def source_text(source):
+    if isinstance(source, list):
+        return "".join(source)
+    if isinstance(source, str):
+        return source
+    return ""
 
 
 def rewrite_notebook_links(notebook_path, notebook_urls):
     notebook_path = Path(notebook_path)
     data = json.loads(notebook_path.read_text(encoding="utf-8"))
+    changed = rewrite_notebook_links_in_data(data, notebook_urls)
+
+    if changed:
+        notebook_path.write_text(
+            json.dumps(data, ensure_ascii=False, indent=1) + "\n",
+            encoding="utf-8",
+        )
+
+    return changed
+
+
+def rewrite_notebook_links_in_data(data, notebook_urls):
     changed = False
 
     for cell in data.get("cells", []):
@@ -114,12 +180,6 @@ def rewrite_notebook_links(notebook_path, notebook_urls):
             if rewritten != source:
                 cell["source"] = rewritten
                 changed = True
-
-    if changed:
-        notebook_path.write_text(
-            json.dumps(data, ensure_ascii=False, indent=1) + "\n",
-            encoding="utf-8",
-        )
 
     return changed
 
