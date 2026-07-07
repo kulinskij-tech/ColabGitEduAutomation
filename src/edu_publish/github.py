@@ -96,11 +96,13 @@ class GitHubRepository:
             path.name: colab.notebook_url(Notebook(self.course, path.name))
             for path in sorted(notebook_dir.glob("*.ipynb"))
         }
+        resolved_notebook_urls = dict(self.course.config.external_notebook_urls)
+        resolved_notebook_urls.update(notebook_urls)
 
         for notebook_path in sorted(notebook_dir.glob("*.ipynb")):
             apply_colab_export_transformations(
                 notebook_path,
-                notebook_urls,
+                resolved_notebook_urls,
                 notebook_urls[notebook_path.name],
             )
 

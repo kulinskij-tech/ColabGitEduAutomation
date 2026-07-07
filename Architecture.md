@@ -83,6 +83,8 @@ Current fields:
 - `github_repo`
 - `github_branch`
 - `github_course_dir`
+- `notebook_include_pattern`
+- `external_notebook_urls`
 
 ---
 
@@ -101,6 +103,7 @@ Responsibilities:
 The export-only Colab transformations currently are:
 
 - rewrite exported local notebook links to Colab URLs
+- rewrite configured external notebook links to published URLs
 - insert one first-cell Open in Colab badge in each exported notebook
 
 GitHubRepository does not call GitHub APIs, execute git commands, or access the
@@ -144,6 +147,7 @@ When `--repo` is supplied, only exported notebooks are transformed:
 ```text
 copy notebook
 rewrite local notebook links to Colab URLs
+rewrite configured external notebook links to their published URLs
 insert Open in Colab badge
 write exported notebook if changed
 ```

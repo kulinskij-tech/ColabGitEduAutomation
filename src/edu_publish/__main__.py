@@ -12,7 +12,7 @@ def print_usage():
     print("  python -m edu_publish analyze /path/to/course [--notebooks PATTERN]")
     print("  python -m edu_publish github-preview /path/to/course --repo owner/name [--notebooks PATTERN]")
     print("  python -m edu_publish colab-preview /path/to/course --repo owner/name [--notebooks PATTERN]")
-    print("  python -m edu_publish github-export /path/to/course /path/to/destination [--repo owner/name] [--notebooks PATTERN]")
+    print("  python -m edu_publish github-export /path/to/course /path/to/destination [--repo owner/name] [--notebooks PATTERN] [--external-notebook NOTEBOOK=URL]")
 
 
 def parse_options(args):
@@ -23,7 +23,10 @@ def parse_options(args):
         if not name.startswith("--") or i + 1 >= len(args):
             print_usage()
             raise SystemExit(1)
-        options[name] = args[i + 1]
+        if name == "--external-notebook":
+            options.setdefault(name, []).append(args[i + 1])
+        else:
+            options[name] = args[i + 1]
         i += 2
     return options
 
@@ -32,7 +35,31 @@ def course_config(options):
     return CourseConfig(
         github_repo=options.get("--repo"),
         notebook_include_pattern=options.get("--notebooks", "*.ipynb"),
+        external_notebook_urls=parse_external_notebook_urls(
+            options.get("--external-notebook", [])
+        ),
     )
+
+
+def parse_external_notebook_urls(values):
+    notebook_urls = {}
+
+    for value in values:
+        if "=" not in value:
+            raise ValueError(
+                "--external-notebook must use NOTEBOOK=URL format"
+            )
+
+        notebook, url = value.split("=", 1)
+        notebook = Path(notebook).name
+        if not notebook or not url:
+            raise ValueError(
+                "--external-notebook must use NOTEBOOK=URL format"
+            )
+
+        notebook_urls[notebook] = url
+
+    return notebook_urls
 
 
 def main():
@@ -87,7 +114,7 @@ def main():
 
         destination = Path(sys.argv[3])
         options = parse_options(sys.argv[4:])
-        if set(options) - {"--repo", "--notebooks"}:
+        if set(options) - {"--repo", "--notebooks", "--external-notebook"}:
             print_usage()
             raise SystemExit(1)
 
