@@ -13,5 +13,8 @@ venv/
 # VS Code
 .vscode/
 
+# Published course repositories
+published/
+
 # macOS
 .DS_Store
