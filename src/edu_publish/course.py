@@ -1,3 +1,4 @@
+from fnmatch import fnmatchcase
 from pathlib import Path
 
 from edu_publish.config import CourseConfig
@@ -17,7 +18,11 @@ class Course:
         self._discover()
 
     def _find_toc(self):
-        toc_files = sorted(self.path.glob("*_toc.ipynb"))
+        toc_files = sorted(
+            path
+            for path in self.path.glob("*_toc.ipynb")
+            if self._matches_notebook_include_pattern(path.name)
+        )
 
         if not toc_files:
             raise FileNotFoundError(
@@ -38,7 +43,11 @@ class Course:
         self.notebooks = [
         Notebook(self, filename)
         for filename in links
+        if self._matches_notebook_include_pattern(filename)
         ]
+
+    def _matches_notebook_include_pattern(self, filename):
+        return fnmatchcase(filename, self.config.notebook_include_pattern)
 
     def report(self):
         lines = [

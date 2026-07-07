@@ -2,16 +2,37 @@ from pathlib import Path
 import sys
 
 from edu_publish.colab import ColabRepository
+from edu_publish.config import CourseConfig
 from edu_publish.course import Course
 from edu_publish.github import GitHubRepository
 
 
 def print_usage():
     print("Usage:")
-    print("  python -m edu_publish analyze /path/to/course")
-    print("  python -m edu_publish github-preview /path/to/course --repo owner/name")
-    print("  python -m edu_publish colab-preview /path/to/course --repo owner/name")
-    print("  python -m edu_publish github-export /path/to/course /path/to/destination [--repo owner/name]")
+    print("  python -m edu_publish analyze /path/to/course [--notebooks PATTERN]")
+    print("  python -m edu_publish github-preview /path/to/course --repo owner/name [--notebooks PATTERN]")
+    print("  python -m edu_publish colab-preview /path/to/course --repo owner/name [--notebooks PATTERN]")
+    print("  python -m edu_publish github-export /path/to/course /path/to/destination [--repo owner/name] [--notebooks PATTERN]")
+
+
+def parse_options(args):
+    options = {}
+    i = 0
+    while i < len(args):
+        name = args[i]
+        if not name.startswith("--") or i + 1 >= len(args):
+            print_usage()
+            raise SystemExit(1)
+        options[name] = args[i + 1]
+        i += 2
+    return options
+
+
+def course_config(options):
+    return CourseConfig(
+        github_repo=options.get("--repo"),
+        notebook_include_pattern=options.get("--notebooks", "*.ipynb"),
+    )
 
 
 def main():
@@ -23,29 +44,35 @@ def main():
     course_path = Path(sys.argv[2])
 
     if command == "analyze":
-        course = Course(course_path)
+        options = parse_options(sys.argv[3:])
+        if set(options) - {"--notebooks"}:
+            print_usage()
+            raise SystemExit(1)
+
+        course = Course(course_path, course_config(options))
         print(course.report())
         return
 
     if command == "github-preview":
-        if len(sys.argv) != 5 or sys.argv[3] != "--repo":
+        options = parse_options(sys.argv[3:])
+        if "--repo" not in options or set(options) - {"--repo", "--notebooks"}:
             print_usage()
             raise SystemExit(1)
 
-        course = Course(course_path)
-        course.config.github_repo = sys.argv[4]
+        course = Course(course_path, course_config(options))
         repo = GitHubRepository(course)
         print(repo.publication_report())
         return
 
     if command == "colab-preview":
-        if len(sys.argv) != 5 or sys.argv[3] != "--repo":
+        options = parse_options(sys.argv[3:])
+        if "--repo" not in options or set(options) - {"--repo", "--notebooks"}:
             print_usage()
             raise SystemExit(1)
 
-        course = Course(course_path)
-        course.config.github_repo = sys.argv[4]
-        course.config.github_course_dir = course.path.name
+        config = course_config(options)
+        config.github_course_dir = course_path.name
+        course = Course(course_path, config)
         github = GitHubRepository(course)
         colab = ColabRepository(github)
 
@@ -54,16 +81,21 @@ def main():
         return
 
     if command == "github-export":
-        if len(sys.argv) not in (4, 6) or (len(sys.argv) == 6 and sys.argv[4] != "--repo"):
+        if len(sys.argv) < 4:
             print_usage()
             raise SystemExit(1)
 
-        course = Course(course_path)
-        if len(sys.argv) == 6:
-            course.config.github_repo = sys.argv[5]
-        course.config.github_course_dir = course.path.name
+        destination = Path(sys.argv[3])
+        options = parse_options(sys.argv[4:])
+        if set(options) - {"--repo", "--notebooks"}:
+            print_usage()
+            raise SystemExit(1)
+
+        config = course_config(options)
+        config.github_course_dir = course_path.name
+        course = Course(course_path, config)
         repo = GitHubRepository(course)
-        repo.export(Path(sys.argv[3]))
+        repo.export(destination)
         return
 
     print_usage()

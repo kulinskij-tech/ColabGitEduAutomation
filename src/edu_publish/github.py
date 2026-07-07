@@ -1,3 +1,4 @@
+from fnmatch import fnmatchcase
 from pathlib import Path
 import json
 import re
@@ -59,7 +60,7 @@ class GitHubRepository:
         notebook_dir = destination / course_dir
         notebook_dir.mkdir(parents=True, exist_ok=True)
 
-        for notebook_path in sorted(self.course.path.glob("*.ipynb")):
+        for notebook_path in self._notebook_paths_for_export():
             target_path = notebook_dir / notebook_path.name
             shutil.copy2(notebook_path, target_path)
 
@@ -80,6 +81,14 @@ class GitHubRepository:
                 )
 
         return destination
+
+    def _notebook_paths_for_export(self):
+        pattern = self.course.config.notebook_include_pattern
+        return sorted(
+            path
+            for path in self.course.path.glob("*.ipynb")
+            if fnmatchcase(path.name, pattern)
+        )
 
     def _update_exported_notebooks_for_colab(self, notebook_dir):
         colab = ColabRepository(self)
