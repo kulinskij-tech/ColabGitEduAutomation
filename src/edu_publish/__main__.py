@@ -11,7 +11,7 @@ def print_usage():
     print("  python -m edu_publish analyze /path/to/course")
     print("  python -m edu_publish github-preview /path/to/course --repo owner/name")
     print("  python -m edu_publish colab-preview /path/to/course --repo owner/name")
-    print("  python -m edu_publish github-export /path/to/course /path/to/destination")
+    print("  python -m edu_publish github-export /path/to/course /path/to/destination [--repo owner/name]")
 
 
 def main():
@@ -54,11 +54,13 @@ def main():
         return
 
     if command == "github-export":
-        if len(sys.argv) != 4:
+        if len(sys.argv) not in (4, 6) or (len(sys.argv) == 6 and sys.argv[4] != "--repo"):
             print_usage()
             raise SystemExit(1)
 
         course = Course(course_path)
+        if len(sys.argv) == 6:
+            course.config.github_repo = sys.argv[5]
         course.config.github_course_dir = course.path.name
         repo = GitHubRepository(course)
         repo.export(Path(sys.argv[3]))

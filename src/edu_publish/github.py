@@ -1,7 +1,13 @@
 from pathlib import Path
+import json
+import re
 import shutil
 
+from edu_publish.colab import ColabRepository
+from edu_publish.notebook import Notebook
+
 RESOURCE_DIRS = ("images", "figs", "img", "data")
+NOTEBOOK_LINK_PATTERN = re.compile(r"(\]\()([^)]+?\.ipynb(?:#[^)]+)?)(\))")
 
 
 class GitHubRepository:
@@ -53,7 +59,11 @@ class GitHubRepository:
         notebook_dir.mkdir(parents=True, exist_ok=True)
 
         for notebook_path in sorted(self.course.path.glob("*.ipynb")):
-            shutil.copy2(notebook_path, notebook_dir / notebook_path.name)
+            target_path = notebook_dir / notebook_path.name
+            shutil.copy2(notebook_path, target_path)
+
+        if self.course.config.github_repo:
+            self._rewrite_exported_notebook_links(notebook_dir)
 
         for name in RESOURCE_DIRS:
             resource_dir = self.course.path / name
@@ -69,3 +79,67 @@ class GitHubRepository:
                 )
 
         return destination
+
+    def _rewrite_exported_notebook_links(self, notebook_dir):
+        colab = ColabRepository(self)
+        notebook_urls = {
+            path.name: colab.notebook_url(Notebook(self.course, path.name))
+            for path in sorted(notebook_dir.glob("*.ipynb"))
+        }
+
+        for notebook_path in sorted(notebook_dir.glob("*.ipynb")):
+            rewrite_notebook_links(notebook_path, notebook_urls)
+
+
+def rewrite_notebook_links(notebook_path, notebook_urls):
+    notebook_path = Path(notebook_path)
+    data = json.loads(notebook_path.read_text(encoding="utf-8"))
+    changed = False
+
+    for cell in data.get("cells", []):
+        if cell.get("cell_type") != "markdown":
+            continue
+
+        source = cell.get("source", [])
+        if isinstance(source, list):
+            rewritten = [
+                rewrite_markdown_notebook_links(part, notebook_urls)
+                for part in source
+            ]
+            if rewritten != source:
+                cell["source"] = rewritten
+                changed = True
+        elif isinstance(source, str):
+            rewritten = rewrite_markdown_notebook_links(source, notebook_urls)
+            if rewritten != source:
+                cell["source"] = rewritten
+                changed = True
+
+    if changed:
+        notebook_path.write_text(
+            json.dumps(data, ensure_ascii=False, indent=1) + "\n",
+            encoding="utf-8",
+        )
+
+    return changed
+
+
+def rewrite_markdown_notebook_links(text, notebook_urls):
+    def replace(match):
+        link = match.group(2)
+        target, separator, fragment = link.partition("#")
+
+        if "://" in target:
+            return match.group(0)
+
+        filename = Path(target).name
+        url = notebook_urls.get(filename)
+        if not url:
+            return match.group(0)
+
+        if separator:
+            url = f"{url}#{fragment}"
+
+        return f"{match.group(1)}{url}{match.group(3)}"
+
+    return NOTEBOOK_LINK_PATTERN.sub(replace, text)
