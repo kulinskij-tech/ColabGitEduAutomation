@@ -28,3 +28,15 @@ Current exporter behavior to preserve:
 - repo-aware export rewrites local notebook links to Colab URLs
 - repo-aware export inserts one first-cell Open in Colab badge per exported notebook
 - source notebooks are never modified
+
+
+Current project state:
+
+- library repo publishes to `git@github.com:kulinskij-tech/ColabGitEduAutomation.git`
+- exported course repos live under ignored `published/`
+- AtomicPhys export target is `published/AtomicPhys`
+- QuantumMechanics1 repo is located at `published/QuantumMechanics1`
+- AtomicPhys remote is `git@github.com:kulinskij-tech/AtomicPhys.git`
+- AtomicPhys export is paused pending maintainer review of unresolved source notebook links
+
+Do not commit or push course exports when validation reports unresolved local notebook links unless the maintainer explicitly decides how those links should be handled.

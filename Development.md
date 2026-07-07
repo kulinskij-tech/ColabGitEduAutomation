@@ -72,3 +72,16 @@ For exporter changes, verify:
 - absolute URLs and non-notebook links remain unchanged
 - fragments such as `notebook.ipynb#section` are preserved
 - every exported notebook has exactly one first-cell Open in Colab badge
+
+
+## Current Manual Publication Notes
+
+Exported course repositories are kept inside this working folder under `published/`, which is ignored by the library repository.
+
+Current AtomicPhys export command:
+
+```powershell
+$env:PYTHONPATH='src'; python -m edu_publish github-export "C:\Users\myself\Documents\localtexmf\Mytex\lectures\quantum\AtomicPhys\Atomic_py" "C:\Users\myself\ColabGitEduAutomation\published\AtomicPhys" --repo kulinskij-tech/AtomicPhys
+```
+
+Before pushing a course export, audit unresolved local `.ipynb` markdown links in the source course. AtomicPhys currently has unresolved links that need a maintainer decision before publication continues.

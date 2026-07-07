@@ -13,6 +13,7 @@ Current functionality:
 - copy notebook resource directories during export
 - optionally rewrite exported notebook links to Google Colab URLs
 - optionally add an Open in Colab badge to exported notebooks
+- keep exported course repositories outside library Git tracking under `published/`
 
 Current CLI:
 
@@ -32,6 +33,15 @@ Export behavior:
 - every exported notebook receives one first-cell Open in Colab badge
 - resource directories such as `images`, `figs`, `img`, and `data` are copied
 - `.ipynb_checkpoints` are ignored
+
+Current publication stage:
+
+- library repository is clean and pushed to `kulinskij-tech/ColabGitEduAutomation`
+- SSH publishing is configured for GitHub
+- exported course repositories are intended to live under `published/`
+- `published/AtomicPhys` export was generated for `kulinskij-tech/AtomicPhys`
+- `published/QuantumMechanics1` contains the moved QuantumMechanics1 course repository
+- AtomicPhys publication is paused while unresolved local notebook links in the source course are reviewed
 
 Future:
 
