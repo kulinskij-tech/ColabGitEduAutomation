@@ -1,108 +1,47 @@
 Current notebook-link issues to solve
 ====================================
 
-Repository state checked after library commit 8fcb147.
 Source course directory checked with Windows path:
 C:\Users\myself\Documents\localtexmf\Mytex\lectures\quantum\quantumbook\QM_py
 
-1. Deferred QM1 issue: qm1_u3alg.ipynb is still referenced but does not exist
------------------------------------------------------------------------------
-
-Current analyzer result:
-
-$env:PYTHONPATH='src'; .venv\Scripts\python.exe -m edu_publish analyze C:\Users\myself\Documents\localtexmf\Mytex\lectures\quantum\quantumbook\QM_py --notebooks qm1_*.ipynb
-
-The QM1 analyzer still reports:
-
-17. qm1_u3alg.ipynb [MISSING]
-
-Reason:
-The source file qm1_toc.ipynb still contains a markdown notebook link inside an HTML comment:
-
-<!--     - [Додатковий матеріал: Алгебра Лі групи $SU(3)$](./qm1_u3alg.ipynb) -->
-
-The current TOC parser reads markdown cell text and extracts .ipynb links by regex. It does not ignore links inside HTML comments. Because the notebook include filter is qm1_*.ipynb, the commented qm1_u3alg.ipynb link is still treated as a QM1 notebook link.
-
-Current source files:
-- qm1_u3alg.ipynb is absent.
-- qm2_u3alg.ipynb exists.
-
-Classification:
-This is a source TOC/content issue exposed by the current parser. It is not an export-copy issue: the exporter copies real files matching qm1_*.ipynb and cannot create a missing qm1_u3alg.ipynb.
-
-Deferred decision:
-The user will review this issue later. Do not solve it opportunistically in unrelated work.
-
-Smallest future fixes to choose from:
-- If the link should remain disabled, remove the markdown .ipynb syntax from the HTML comment or remove the commented line from qm1_toc.ipynb.
-- If QM1 should still link to the moved QM2 notebook, change the TOC reference to qm2_u3alg.ipynb; with --notebooks qm1_*.ipynb the QM1 analyzer will no longer expect it. Cross-course link publishing still needs Stage 5 policy.
-- Do not copy qm2_u3alg.ipynb back to qm1_u3alg.ipynb unless the course maintainer decides the notebook belongs in both courses.
-
-2. QM1 has a real cross-course link to qm2_u3alg.ipynb
-------------------------------------------------------
-
-Current source reference:
-
-C:\Users\myself\Documents\localtexmf\Mytex\lectures\quantum\quantumbook\QM_py\qm1_intsymom_theor.ipynb
-
-The relevant markdown link is:
-
-[Властивості SU(3)-алгебри розглядаються](./qm2_u3alg.ipynb) на основі властивостей SU(2)-алгебри побудованної вище.
-
-Classification:
-This is an intentional or likely-intended cross-course notebook link from QM1 content to QM2 content.
-
-Current publishing limitation:
-Stage 5 cross-course notebook linking is not implemented yet. Repo-aware export currently rewrites links only when the target notebook is in the same export set or explicitly mapped through --external-notebook. A local qm2_*.ipynb link inside a QM1 notebook is outside the qm1_*.ipynb export set, so it needs a Stage 5 decision or explicit external mapping before final QM1 publication.
-
-Smallest future fixes to choose from:
-- Add an explicit --external-notebook mapping when exporting QM1, if the target URL policy is known.
-- Implement Stage 5 cross-course link resolution later.
-- Leave the source link as-is until the Stage 5 policy is chosen.
-
-3. QM2 source link corrected from qm1_u3alg.ipynb to qm2_u3alg.ipynb
---------------------------------------------------------------------
+1. QuantumMechanics2 corrected link still needs publication cleanup
+-------------------------------------------------------------------
 
 Current source reference:
 
 C:\Users\myself\Documents\localtexmf\Mytex\lectures\quantum\quantumbook\QM_py\qm2_qwrkzoology.ipynb
 
-The stale link was:
+The stale link was corrected in the source working copy from:
 
 ./qm1_u3alg.ipynb
 
-It has been corrected in the source working copy to:
+to:
 
 ./qm2_u3alg.ipynb
 
 The published QuantumMechanics2 working copy was regenerated with:
 
-$env:PYTHONPATH='src'; .venv\Scripts\python.exe -m edu_publish github-export C:\Users\myself\Documents\localtexmf\Mytex\lectures\quantum\quantumbook\QM_py published\QuantumMechanics2 --repo kulinskij-tech/QuantumMechanics2 --notebooks qm2_*.ipynb
+python -m edu_publish github-export C:\Users\myself\Documents\localtexmf\Mytex\lectures\quantum\quantumbook\QM_py published\QuantumMechanics2 --repo kulinskij-tech/QuantumMechanics2 --notebooks qm2_*.ipynb
 
 The exported published link is now rewritten to the normal Colab URL:
 
 https://colab.research.google.com/github/kulinskij-tech/QuantumMechanics2/blob/main/QM_py/qm2_u3alg.ipynb
 
-Current Git state:
-- Library repo has no tracked code/doc changes from this QM2 link correction.
-- published\QuantumMechanics1 is clean.
-- published\QuantumMechanics2 has one modified file: QM_py/qm2_qwrkzoology.ipynb.
+Current unresolved state:
+- published\QuantumMechanics2 still has a real content diff in QM_py/qm2_qwrkzoology.ipynb.
+- git status may also list regenerated files because of index metadata until refreshed.
 - The source course file qm2_qwrkzoology.ipynb is outside this library Git repository, so it is not captured by a library commit.
 
-4. Verification commands
+2. Verification commands
 ------------------------
-
-QM1 currently still exposes the deferred qm1_u3alg issue:
-
-$env:PYTHONPATH='src'; .venv\Scripts\python.exe -m edu_publish analyze C:\Users\myself\Documents\localtexmf\Mytex\lectures\quantum\quantumbook\QM_py --notebooks qm1_*.ipynb
 
 QM2 source detection should pass with all TOC-linked notebooks OK:
 
-$env:PYTHONPATH='src'; .venv\Scripts\python.exe -m edu_publish analyze C:\Users\myself\Documents\localtexmf\Mytex\lectures\quantum\quantumbook\QM_py --notebooks qm2_*.ipynb
+python -m edu_publish analyze C:\Users\myself\Documents\localtexmf\Mytex\lectures\quantum\quantumbook\QM_py --notebooks qm2_*.ipynb
 
 Project syntax check:
 
-$env:PYTHONPATH='src'; .venv\Scripts\python.exe -m compileall src
+python -m compileall src
 
 git diff whitespace check for the library repo:
 
@@ -112,9 +51,8 @@ Published QM2 diff check:
 
 git -C published\QuantumMechanics2 diff -- QM_py\qm2_qwrkzoology.ipynb
 
-5. Open decisions before Stage 5
+3. Open decisions before Stage 5
 --------------------------------
 
 - Decide whether commented .ipynb links in TOC files should be ignored by source cleanup, parser behavior, or both.
-- Decide how QM1 should publish links to QM2 notebooks.
 - Decide whether external cross-course links should be supplied manually through --external-notebook or resolved automatically by a Stage 5 cross-course mapping mechanism.
