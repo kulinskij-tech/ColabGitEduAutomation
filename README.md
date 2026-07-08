@@ -43,6 +43,7 @@ Current publication stage:
 - exported course repositories are intended to live under `published/`
 - `published/AtomicPhys` export was generated for `kulinskij-tech/AtomicPhys`
 - `published/QuantumMechanics1` contains the moved QuantumMechanics1 course repository
+- `published/QuantumMechanics2` contains the generated QuantumMechanics2 course repository
 - AtomicPhys publication is paused while unresolved local notebook links in the source course are reviewed
 
 Future:

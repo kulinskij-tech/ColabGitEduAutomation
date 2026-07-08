@@ -4,6 +4,16 @@ pilot_course:
   name: "Atomic_py"
   path: "quantum/AtomicPhys/Atomic_py"
 
+source_courses:
+  - name: "QuantumMechanics1"
+    path: "quantum/quantumbook/QM_py"
+    notebook_pattern: "qm1_*.ipynb"
+    github_repo: "kulinskij-tech/QuantumMechanics1"
+  - name: "QuantumMechanics2"
+    path: "quantum/quantumbook/QM_py"
+    notebook_pattern: "qm2_*.ipynb"
+    github_repo: "kulinskij-tech/QuantumMechanics2"
+
 github:
   user: "CHANGE_ME"
   branch: "main"

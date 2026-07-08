@@ -86,4 +86,16 @@ Current AtomicPhys export command:
 .venv/bin/python -m edu_publish github-export /media/me/Myfiles/localtexmf/Mytex/lectures/quantum/AtomicPhys/Atomic_py published/AtomicPhys --repo kulinskij-tech/AtomicPhys
 ```
 
+Current QuantumMechanics2 source check:
+
+```powershell
+$env:PYTHONPATH='src'; .venv\Scripts\python.exe -m edu_publish analyze "C:\Users\myself\Documents\localtexmf\Mytex\lectures\quantum\quantumbook\QM_py" --notebooks qm2_*.ipynb
+```
+
+Current QuantumMechanics2 export command:
+
+```powershell
+$env:PYTHONPATH='src'; .venv\Scripts\python.exe -m edu_publish github-export "C:\Users\myself\Documents\localtexmf\Mytex\lectures\quantum\quantumbook\QM_py" "C:\Users\myself\ColabGitEduAutomation\published\QuantumMechanics2" --repo kulinskij-tech/QuantumMechanics2 --notebooks qm2_*.ipynb
+```
+
 Before pushing a course export, audit unresolved local `.ipynb` markdown links in the source course. AtomicPhys currently has unresolved links that need a maintainer decision before publication continues.

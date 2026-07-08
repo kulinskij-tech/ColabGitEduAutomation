@@ -41,6 +41,7 @@ Current course publication status:
 
 - `AtomicPhys`: exported locally with Colab badges, not pushed yet
 - `QuantumMechanics1`: moved into `published/QuantumMechanics1`
+- `QuantumMechanics2`: exported into `published/QuantumMechanics2` from `QM_py` with `qm2_*.ipynb`
 
 AtomicPhys is paused for source review. The audit found unresolved local notebook links in the source notebooks, including one AtomicPhys TOC link to a missing notebook and several links to QM1/QM2 or other external course notebooks.
 
