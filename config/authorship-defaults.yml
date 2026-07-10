@@ -5,6 +5,7 @@ authorship:
   include_outputs: false
   deduplicate: true
   minimum_duplicate_block_length: 200
+  rounding_increment: 0.5
 
 exclude:
   latex:

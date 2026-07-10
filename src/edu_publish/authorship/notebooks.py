@@ -16,6 +16,7 @@ from edu_publish.authorship.models import (
     NotebookResult,
     TextBlock,
 )
+from edu_publish.authorship.rounding import round_up_to_increment
 
 
 def measure_notebook_dirs(
@@ -43,7 +44,11 @@ def measure_notebook_dirs(
         text_characters += result.code_characters
     if config.include_outputs:
         text_characters += result.output_characters
-    result.author_sheets = text_characters / config.characters_per_sheet
+    result.raw_author_sheets = text_characters / config.characters_per_sheet
+    result.author_sheets = round_up_to_increment(
+        result.raw_author_sheets,
+        config.rounding_increment,
+    )
     return result
 
 
@@ -154,4 +159,7 @@ def output_image_count(output: dict) -> int:
 def is_excluded(path: Path, patterns: list[str]) -> bool:
     text = str(path)
     return any(fnmatchcase(path.name, pattern) or pattern in text for pattern in patterns)
+
+
+
 

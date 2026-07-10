@@ -20,6 +20,7 @@ from edu_publish.authorship.report import (
     write_json,
     write_markdown,
 )
+from edu_publish.authorship.rounding import round_up_to_increment
 
 
 def run_measure_authorship(args: list[str]) -> str:
@@ -75,6 +76,8 @@ def apply_cli_overrides(config: ToolConfig, options: dict[str, Any]) -> None:
         config.outputs.markdown = Path(options["--markdown"])
     if "--csv" in options:
         config.outputs.csv = Path(options["--csv"])
+    if "--rounding-increment" in options:
+        config.authorship.rounding_increment = float(options["--rounding-increment"])
 
 
 def measure_from_config(config: ToolConfig) -> MeasurementReport:
@@ -94,7 +97,11 @@ def measure_from_config(config: ToolConfig) -> MeasurementReport:
         course=config.course,
         main_publication=main,
         interactive_companion=companion,
-        combined_author_sheets=main.author_sheets + companion.author_sheets,
+        combined_raw_author_sheets=main.raw_author_sheets + companion.raw_author_sheets,
+        combined_author_sheets=round_up_to_increment(
+            main.raw_author_sheets + companion.raw_author_sheets,
+            config.authorship.rounding_increment,
+        ),
         settings=config.authorship,
         warnings=warnings,
     )
@@ -145,6 +152,7 @@ def config_from_dict(data: dict[str, Any], base: Path) -> ToolConfig:
             include_outputs=bool(authorship_data.get("include_outputs", False)),
             deduplicate=bool(authorship_data.get("deduplicate", True)),
             minimum_duplicate_block_length=int(authorship_data.get("minimum_duplicate_block_length", 200)),
+            rounding_increment=float(authorship_data.get("rounding_increment", 0.5)),
         ),
         sources=SourceConfig(
             latex_roots=[resolve_config_path(base, value) for value in as_list(source_data.get("latex_roots", source_data.get("latex_main", [])))],
@@ -241,3 +249,7 @@ def parse_scalar(value: str) -> Any:
         return int(value)
     except ValueError:
         return value
+
+
+
+

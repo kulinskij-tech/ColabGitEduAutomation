@@ -104,6 +104,22 @@ See \ref{sec:other}.
             self.assertEqual(companion.markdown_characters, 0)
             self.assertGreater(companion.duplicates_removed, 0)
 
+    def test_author_sheets_round_up_to_half_sheet(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            latex = root / "main.tex"
+            latex.write_text("a" * 40001, encoding="utf-8")
+
+            report = measure_from_config(
+                ToolConfig(
+                    sources=SourceConfig(latex_roots=[latex]),
+                    authorship=AuthorshipConfig(rounding_increment=0.5),
+                )
+            )
+
+            self.assertAlmostEqual(report.main_publication.raw_author_sheets, 1.000025)
+            self.assertEqual(report.main_publication.author_sheets, 1.5)
+            self.assertEqual(report.combined_author_sheets, 1.5)
     def test_combined_calculation(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -168,3 +184,4 @@ def code_cell(source):
 
 if __name__ == "__main__":
     unittest.main()
+

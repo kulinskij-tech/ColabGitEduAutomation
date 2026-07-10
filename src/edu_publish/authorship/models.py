@@ -21,6 +21,7 @@ class AuthorshipConfig:
     include_outputs: bool = False
     deduplicate: bool = True
     minimum_duplicate_block_length: int = 200
+    rounding_increment: float = 0.5
 
 
 @dataclass
@@ -57,6 +58,7 @@ class TextBlock:
 @dataclass
 class LatexResult:
     characters: int = 0
+    raw_author_sheets: float = 0.0
     author_sheets: float = 0.0
     files_read: list[str] = field(default_factory=list)
     blocks: list[TextBlock] = field(default_factory=list)
@@ -70,6 +72,7 @@ class NotebookResult:
     output_characters: int = 0
     image_count: int = 0
     duplicates_removed: int = 0
+    raw_author_sheets: float = 0.0
     author_sheets: float = 0.0
     notebooks_read: list[str] = field(default_factory=list)
     duplicate_blocks: list[dict[str, Any]] = field(default_factory=list)
@@ -81,6 +84,7 @@ class MeasurementReport:
     course: CourseMetadata
     main_publication: LatexResult
     interactive_companion: NotebookResult
+    combined_raw_author_sheets: float
     combined_author_sheets: float
     settings: AuthorshipConfig
     warnings: list[str]

@@ -17,7 +17,7 @@ The calculation uses the standard approximation:
 - 1 author's sheet = 40,000 characters, including spaces;
 - 1 author's sheet = 3,000 cm2 of illustrative material.
 
-The current implementation focuses on deterministic text volume:
+The current implementation focuses on deterministic text volume. Raw values are calculated first, then reported author-sheet totals are rounded upward using `rounding_increment` (default `0.5`; use `1` for whole-sheet reporting):
 
 ```text
 author_sheets = text_characters / 40000
@@ -66,6 +66,7 @@ authorship:
   code_mode: text
   deduplicate: true
   minimum_duplicate_block_length: 200
+  rounding_increment: 0.5
 ```
 
 CLI options override configuration values.
@@ -80,3 +81,4 @@ version.
 
 For official reporting, treat the output as an auditable estimate and confirm
 the final method with the university publishing office.
+

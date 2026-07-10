@@ -19,4 +19,6 @@ authorship:
   code_mode: text
   include_outputs: false
   deduplicate: true
+  rounding_increment: 0.5
+
 

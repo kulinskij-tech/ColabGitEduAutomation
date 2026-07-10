@@ -138,6 +138,8 @@ python -m edu_publish measure-authorship `
   --csv reports\qm1-authorship.csv
 ```
 
+Use `--rounding-increment 1` when the report must be rounded upward to whole author sheets instead of half sheets.
+
 For a new course, copy `courses\qm1-authorship.yml`, change the course metadata,
 LaTeX roots, notebook directories, exclusions, and outputs. The measurement
 engine does not need course-specific code changes.
@@ -159,3 +161,5 @@ engine does not need course-specific code changes.
 - Resource directories named `images`, `figs`, `img`, and `data` are copied.
 - `.ipynb_checkpoints` are ignored during export.
 - Keep course-specific paths in configuration files where possible.
+
+

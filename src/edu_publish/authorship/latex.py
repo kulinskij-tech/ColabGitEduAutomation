@@ -6,6 +6,7 @@ import re
 
 from edu_publish.authorship.deduplicate import normalize_text, visible_blocks
 from edu_publish.authorship.models import AuthorshipConfig, LatexResult, TextBlock
+from edu_publish.authorship.rounding import round_up_to_increment
 
 
 def measure_latex_roots(
@@ -32,7 +33,11 @@ def measure_latex_roots(
             )
 
     result.characters = sum(len(block.text) for block in result.blocks)
-    result.author_sheets = result.characters / config.characters_per_sheet
+    result.raw_author_sheets = result.characters / config.characters_per_sheet
+    result.author_sheets = round_up_to_increment(
+        result.raw_author_sheets,
+        config.rounding_increment,
+    )
     return result
 
 
@@ -143,4 +148,5 @@ def normalize_spacing(text: str) -> str:
     if current:
         paragraphs.append(" ".join(current))
     return "\n\n".join(paragraphs)
+
 

@@ -14,7 +14,7 @@ def print_usage():
     print("  python -m edu_publish github-preview /path/to/course --repo owner/name [--notebooks PATTERN]")
     print("  python -m edu_publish colab-preview /path/to/course --repo owner/name [--notebooks PATTERN]")
     print("  python -m edu_publish github-export /path/to/course /path/to/destination [--repo owner/name] [--notebooks PATTERN] [--external-notebook NOTEBOOK=URL]")
-    print("  python -m edu_publish measure-authorship --config path/to/course.yml [--defaults config/authorship-defaults.yml] [--json report.json] [--markdown report.md] [--csv report.csv]")
+    print("  python -m edu_publish measure-authorship --config path/to/course.yml [--defaults config/authorship-defaults.yml] [--json report.json] [--markdown report.md] [--csv report.csv] [--rounding-increment 0.5|1]")
 
 
 def parse_options(args):
@@ -145,3 +145,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
