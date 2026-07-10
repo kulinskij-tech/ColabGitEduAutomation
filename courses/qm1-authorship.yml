@@ -1,0 +1,22 @@
+course:
+  name: Quantum Mechanics I
+  author: ""
+  semester: ""
+  publication_title: Quantum Mechanics I educational publication
+
+sources:
+  latex_roots:
+    - C:\Users\myself\Documents\localtexmf\Mytex\lectures\quantum\quantumbook\practicemethod\qru1prob_xelatex_ua.tex
+  notebooks:
+    - ..\published\QuantumMechanics1\QM_py
+
+outputs:
+  json: reports\qm1-authorship.json
+  markdown: reports\qm1-authorship.md
+  csv: reports\qm1-authorship.csv
+
+authorship:
+  code_mode: text
+  include_outputs: false
+  deduplicate: true
+

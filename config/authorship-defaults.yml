@@ -1,0 +1,16 @@
+authorship:
+  characters_per_sheet: 40000
+  illustration_cm2_per_sheet: 3000
+  code_mode: text
+  include_outputs: false
+  deduplicate: true
+  minimum_duplicate_block_length: 200
+
+exclude:
+  latex:
+    - bibliography
+    - generated
+  notebooks:
+    - .ipynb_checkpoints
+    - tests
+    - archive

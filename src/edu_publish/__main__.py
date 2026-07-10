@@ -1,6 +1,7 @@
 from pathlib import Path
 import sys
 
+from edu_publish.authorship import run_measure_authorship
 from edu_publish.colab import ColabRepository
 from edu_publish.config import CourseConfig
 from edu_publish.course import Course
@@ -13,6 +14,7 @@ def print_usage():
     print("  python -m edu_publish github-preview /path/to/course --repo owner/name [--notebooks PATTERN]")
     print("  python -m edu_publish colab-preview /path/to/course --repo owner/name [--notebooks PATTERN]")
     print("  python -m edu_publish github-export /path/to/course /path/to/destination [--repo owner/name] [--notebooks PATTERN] [--external-notebook NOTEBOOK=URL]")
+    print("  python -m edu_publish measure-authorship --config path/to/course.yml [--defaults config/authorship-defaults.yml] [--json report.json] [--markdown report.md] [--csv report.csv]")
 
 
 def parse_options(args):
@@ -20,7 +22,10 @@ def parse_options(args):
     i = 0
     while i < len(args):
         name = args[i]
-        if not name.startswith("--") or i + 1 >= len(args):
+        if not name.startswith("--"):
+            print_usage()
+            raise SystemExit(1)
+        if i + 1 >= len(args):
             print_usage()
             raise SystemExit(1)
         if name == "--external-notebook":
@@ -63,11 +68,20 @@ def parse_external_notebook_urls(values):
 
 
 def main():
-    if len(sys.argv) < 3:
+    if len(sys.argv) < 2:
         print_usage()
         raise SystemExit(1)
 
     command = sys.argv[1]
+
+    if command == "measure-authorship":
+        print(run_measure_authorship(sys.argv[2:]))
+        return
+
+    if len(sys.argv) < 3:
+        print_usage()
+        raise SystemExit(1)
+
     course_path = Path(sys.argv[2])
 
     if command == "analyze":
