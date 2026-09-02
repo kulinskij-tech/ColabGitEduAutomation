@@ -5,7 +5,9 @@ from edu_publish.authorship import run_measure_authorship
 from edu_publish.colab import ColabRepository
 from edu_publish.config import CourseConfig
 from edu_publish.course import Course
+from edu_publish.core_pdf import run_generate_core_pdf
 from edu_publish.github import GitHubRepository
+from edu_publish.latex_pdf_size import run_latex_with_pdf_size
 
 
 def print_usage():
@@ -14,7 +16,9 @@ def print_usage():
     print("  python -m edu_publish github-preview /path/to/course --repo owner/name [--notebooks PATTERN]")
     print("  python -m edu_publish colab-preview /path/to/course --repo owner/name [--notebooks PATTERN]")
     print("  python -m edu_publish github-export /path/to/course /path/to/destination [--repo owner/name] [--notebooks PATTERN] [--external-notebook NOTEBOOK=URL]")
+    print("  python -m edu_publish generate-core-pdf /path/to/course [--output path/to/course_core.pdf] [--title TITLE] [--author AUTHOR] [--subtitle SUBTITLE] [--notebooks PATTERN] [--renderer printed|html|nbclassic] [--force] [--no-compile]")
     print("  python -m edu_publish measure-authorship --config path/to/course.yml [--defaults config/authorship-defaults.yml] [--json report.json] [--markdown report.md] [--csv report.csv] [--rounding-increment 0.5|1]")
+    print("  python -m edu_publish latex-pdf-size --main path/to/main.tex [--target path/to/file-with-obsyag.tex] [--engine xelatex]")
 
 
 def parse_options(args):
@@ -76,6 +80,14 @@ def main():
 
     if command == "measure-authorship":
         print(run_measure_authorship(sys.argv[2:]))
+        return
+
+    if command == "latex-pdf-size":
+        print(run_latex_with_pdf_size(sys.argv[2:]))
+        return
+
+    if command == "generate-core-pdf":
+        print(run_generate_core_pdf(sys.argv[2:]))
         return
 
     if len(sys.argv) < 3:
