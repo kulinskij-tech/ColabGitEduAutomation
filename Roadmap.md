@@ -39,15 +39,14 @@ published/
 
 Current course publication status:
 
-- `AtomicPhys`: exported locally with Colab badges, not pushed yet
+- `AtomicPhys`: exported locally with Colab badges, not pushed yet; notebook-native `atomicphys_core.pdf` builds from manually printed notebook PDFs and passes the current 164-page QC after the `atomicphys_atomlight` and `atomicphys_mols` reprints
 - `QuantumMechanics1`: moved into `published/QuantumMechanics1`
 - `QuantumMechanics2`: exported into `published/QuantumMechanics2` from `QM_py` with `qm2_*.ipynb`
 
-AtomicPhys is paused for source review. The audit found unresolved local notebook links in the source notebooks, including one AtomicPhys TOC link to a missing notebook and several links to QM1/QM2 or other external course notebooks.
+AtomicPhys source review is complete for TOC-linked notebooks. The previously missing `atomicphys_intsymom_probs.ipynb` source notebook exists, the AtomicPhys analysis passes, and the local export has been regenerated from source. The core PDF workflow is usable and the two previously flagged notebook PDFs have been reprinted. Experimental additions now cover the main historical experiments; the Ramsauer-Townsend section uses an Ar/Kr/Xe comparison generated from LXCat SIGLO data and explains the limited analogy with the Poisson-Arago spot.
 
 ## Next
 
-- decide how AtomicPhys should handle unresolved cross-course notebook links
 - improve export validation and error messages
 - add focused automated tests when a test structure is introduced
 - prepare for repository synchronization workflows

@@ -86,6 +86,31 @@ Current AtomicPhys export command:
 .venv/bin/python -m edu_publish github-export /media/me/Myfiles/localtexmf/Mytex/lectures/quantum/AtomicPhys/Atomic_py published/AtomicPhys --repo kulinskij-tech/AtomicPhys
 ```
 
+Current AtomicPhys core PDF command on Windows:
+
+```powershell
+$env:PYTHONPATH='src'; python -m edu_publish generate-core-pdf "C:\Users\myself\Documents\localtexmf\Mytex\lectures\quantum\AtomicPhys\Atomic_py" --output published\AtomicPhys\atomicphys_core.pdf --renderer printed --force
+```
+
+The AtomicPhys core PDF workflow reuses manually printed notebook PDFs from the
+sibling `Atomic_py_book` directory. After reprinting `atomicphys_atomlight` and
+`atomicphys_mols` from rendered Jupyter view, the current QC pass generates a
+164-page, approximately 12.8 MB `published\AtomicPhys\atomicphys_core.pdf` with
+the previously visible raw LaTeX corrected. Do not replace the manual pre-prints
+with the automated HTML fallback unless MathJax rendering has been verified
+locally.
+
+AtomicPhys experimental sections can be refreshed selectively. For example:
+
+```powershell
+C:\Users\myself\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe tools\add_atomicphys_experimental_sections.py --atomic-py "C:\Users\myself\Documents\localtexmf\Mytex\lectures\quantum\AtomicPhys\Atomic_py" --notebook atomicphys_dual.ipynb
+```
+
+The Ramsauer-Townsend figure generated for `atomicphys_dual.ipynb` compares Ar,
+Kr, and Xe using the checked-in LXCat SIGLO data in `sources/lxcat_siglo.json`.
+After source notebook changes, manually reprint the affected notebook into
+`Atomic_py_book` before rebuilding the merged core PDF.
+
 Current QuantumMechanics2 source check:
 
 ```powershell
@@ -98,4 +123,4 @@ Current QuantumMechanics2 export command:
 $env:PYTHONPATH='src'; .venv\Scripts\python.exe -m edu_publish github-export "C:\Users\myself\Documents\localtexmf\Mytex\lectures\quantum\quantumbook\QM_py" "C:\Users\myself\ColabGitEduAutomation\published\QuantumMechanics2" --repo kulinskij-tech/QuantumMechanics2 --notebooks qm2_*.ipynb
 ```
 
-Before pushing a course export, audit unresolved local `.ipynb` markdown links in the source course. AtomicPhys currently has unresolved links that need a maintainer decision before publication continues.
+Before pushing a course export, audit unresolved local `.ipynb` markdown links in the source course. AtomicPhys currently passes the TOC-linked notebook audit.

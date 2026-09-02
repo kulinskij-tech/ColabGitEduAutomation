@@ -40,6 +40,9 @@ Current project state:
 - QuantumMechanics2 repo is located at `published/QuantumMechanics2`
 - QuantumMechanics2 remote is `git@github.com:kulinskij-tech/QuantumMechanics2.git`
 - AtomicPhys remote is `git@github.com:kulinskij-tech/AtomicPhys.git`
-- AtomicPhys export is paused pending maintainer review of unresolved source notebook links
+- AtomicPhys source TOC links resolve and the local export has been regenerated from source
+- AtomicPhys notebook-native core PDF is generated from pre-printed PDFs in the sibling `Atomic_py_book` folder
+- Current AtomicPhys core PDF QC passes after reprinting `atomicphys_atomlight` and `atomicphys_mols`; the merged PDF has 164 pages and is about 12.8 MB
+- AtomicPhys experimental notebook sections are maintained by `tools/add_atomicphys_experimental_sections.py`; their source figures and citations must be checked before the affected notebooks are manually reprinted
 
 Do not commit or push course exports when validation reports unresolved local notebook links unless the maintainer explicitly decides how those links should be handled.
