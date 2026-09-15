@@ -36,6 +36,7 @@ Current project state:
 - exported course repos live under ignored `published/`
 - AtomicPhys export target is `published/AtomicPhys`
 - QuantumMechanics1 repo is located at `published/QuantumMechanics1`
+- QuantumMechanics1 was refreshed and its supplementary links repaired on 2026-09-15: all 34 exported notebooks and 95 notebook links validate. Run `tools/refresh_qm1_links.py` after export to preserve the repairs; see `docs/QM1_REFRESH_STATUS.md`.
 - QuantumMechanics2 source uses `C:\Users\myself\Documents\localtexmf\Mytex\lectures\quantum\quantumbook\QM_py` with `--notebooks qm2_*.ipynb`
 - QuantumMechanics2 repo is located at `published/QuantumMechanics2`
 - QuantumMechanics2 remote is `git@github.com:kulinskij-tech/QuantumMechanics2.git`
