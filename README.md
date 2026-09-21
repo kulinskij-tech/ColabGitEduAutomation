@@ -54,6 +54,54 @@ Current publication stage:
 - AtomicPhys experimental sections are reproducible with `tools/add_atomicphys_experimental_sections.py`; the Ramsauer-Townsend comparison uses Ar/Kr/Xe momentum-transfer data from the LXCat SIGLO database
 - AtomicPhys student guidance and syllabus artifacts are reproducible with `tools/build_atomicphys_student_docs.py`
 
+## Example: update QM1 materials
+
+Run from the ColabGitEduAutomation repository root. Use a Python environment
+with `PyPDF2` installed (the CLI imports it even for notebook export).
+This Linux example uses the source materials on `/media/me/Myfiles`:
+
+```bash
+set -e
+export PYTHONPATH=src
+qm1_source='/media/me/Myfiles/localtexmf/Mytex/lectures/quantum/quantumbook/QM_py'
+phys4math_source='/media/me/Myfiles/localtexmf/Mytex/lectures/Phys4Math/Phys4Math_course'
+qm1_destination='published/QuantumMechanics1'
+
+.venv/bin/python -m edu_publish analyze "$qm1_source" --notebooks 'qm1_*.ipynb'
+.venv/bin/python -m edu_publish github-export "$qm1_source" "$qm1_destination" \
+  --repo kulinskij-tech/QuantumMechanics1 --notebooks 'qm1_*.ipynb'
+.venv/bin/python tools/refresh_qm1_links.py \
+  --source "$qm1_source" --phys4math "$phys4math_source" \
+  --destination "$qm1_destination"
+
+git -C "$qm1_destination" diff --check
+git -C "$qm1_destination" diff --stat
+```
+
+Always run the repair after export: it includes `qm_technotes`, `sinc_wolfram`,
+`rectwv_fresnel`, and `qm1_qcorr`, restores the required section anchors, and
+repairs QM1/Phys4Math/QM2 notebook links. Source notebooks remain unchanged.
+The `qm1_*.ipynb` filter excludes QM2 notebooks from the shared source folder.
+
+For an existing repository with local edits, export and repair into a fresh
+preview directory first, validate it, then copy the course files into the
+published repository. The exporter overwrites destination `README.md` and
+`.gitignore`; preserve customized repository-level files. Export updates
+selected notebooks and resource directories but does not remove obsolete
+notebooks. Review the diff and validate notebook links before committing or
+pushing. These commands update local materials only.
+
+The 2026-09-21 run used `reports/qm1-refresh-2026-09-21` as its preview;
+validation results are in `reports/qm1-refresh-2026-09-21-validation.json`.
+It refreshed six notebooks and validated 32 exported notebooks, 92 notebook
+links, and 93 resource files. Two older destination notebooks absent from the
+current source (`qm1_atomh_conluent` and `qm1_atomh_hyeprgeom`) were retained.
+The subsequent publication preserves the remote removal of those two obsolete
+notebooks. Notebook code was not executed.
+See [QM1 link-repair details](docs/QM1_REFRESH_STATUS.md) and the
+[publishing guide](docs/PUBLISHING_HOWTO.md) for the Windows source paths
+and PowerShell examples.
+
 Future:
 
 - richer export validation

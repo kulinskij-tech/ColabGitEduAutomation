@@ -1,0 +1,19 @@
+{
+  "date": "2026-09-21",
+  "notebooks_validated": 32,
+  "notebook_links_checked": 92,
+  "resource_files_validated": 93,
+  "unresolved_links": [],
+  "changed_notebooks": [
+    "qm1_spinpauli_zad.ipynb",
+    "qm1_scheiz_theor.ipynb",
+    "qm1_qbitspace.ipynb",
+    "qm1_atomh_theor.ipynb",
+    "qm1_toc.ipynb",
+    "qm1_spinpauli_theor.ipynb"
+  ],
+  "extra_destination_files": [
+    "qm1_atomh_conluent.ipynb",
+    "qm1_atomh_hyeprgeom.ipynb"
+  ]
+}
