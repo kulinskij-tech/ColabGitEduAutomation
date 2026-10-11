@@ -33,7 +33,7 @@ def main():
     # These former Phys4Math sections are already present in the QM1 course.
     anchors = {
         'qm1_qbitspace.ipynb': {
-            'qbit': 'Найпростійшою квантовою системою',
+            'qbit': 'Найпростішою квантовою системою',
             'ortho': 'Ортопроектор на такий стан:',
         },
         'qm1_ermitop_theor.ipynb': {
@@ -49,6 +49,10 @@ def main():
                 continue
             matches = [c for c in nb['cells'] if c['cell_type'] == 'markdown'
                        and marker in ''.join(c.get('source', []))]
+            if not matches and anchor == 'qbit':
+                marker = 'Найпростійшою квантовою системою'
+                matches = [c for c in nb['cells'] if c['cell_type'] == 'markdown'
+                           and marker in ''.join(c.get('source', []))]
             if len(matches) != 1:
                 raise ValueError(f'{name}: expected exactly one anchor location for {anchor}')
             cell = matches[0]
